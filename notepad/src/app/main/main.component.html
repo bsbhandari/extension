@@ -1,0 +1,129 @@
+<mat-drawer-container autosize class="notepad-container">
+  <mat-drawer #sidenav mode="side" opened="sideNavOpened" style="width:250px">
+    <mat-toolbar color="primary" class="notepad-container__header">
+      <img class="notepad-logo" src="../../assets/images/notepad_white.png" matTooltip="My Notebook">
+      <!-- <mat-icon>
+        sticky_note_2
+      </mat-icon> -->
+      <!-- <div class="notepad-container__header-search">
+        <mat-form-field appearance="outline">
+          <mat-label>Search</mat-label>
+          <input matInput>
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div> -->
+    </mat-toolbar>
+
+    <section class="notepad-container__content --sections">
+      <app-section [container]="container" (onAction)="onAction($event)" [inActiveContainer]="inActiveContainer"
+        [viewMode]="viewMode"></app-section>
+    </section>
+
+    <mat-toolbar color="secondary" class="notepad-container__footer">
+      <div class="notepad-container__footer--left">
+        <mat-icon matTooltip="View Deleted Notes" color="primary" class="notepad-icons"
+          *ngIf="viewMode===getViewMode.Active" (click)="openTrash()">
+          delete_outline
+        </mat-icon>
+        <mat-icon matTooltip="Go Back To Notes" color="primary" class="notepad-icons"
+          *ngIf="viewMode===getViewMode.InActive" (click)="openTrash()">
+          arrow_back_ios
+        </mat-icon>
+      </div>
+      <div class="notepad-container__footer--right">
+        <a href="https://www.facebook.com/chromenotes" target="_blank" matTooltip="Follow in facebook"
+          (click)="openFb()">
+          <img class="notepad-icons" src="../../assets/images/facebook.png">
+        </a>
+        &nbsp;
+        <a href="https://www.linkedin.com/in/bhupendrab/" target="_blank" matTooltip="Follow in linkedin"
+          (click)="openLinkedIn()">
+          <img class="notepad-icons" src="../../assets/images/linkedin.png">
+        </a>
+      </div>
+    </mat-toolbar>
+  </mat-drawer>
+
+  <section style="height:100%">
+    <mat-toolbar color="primary" class="notepad-container__header">
+      <div class="notepad-container__header__left">
+        <ng-container *ngIf="!sideNavOpened">
+          <img class="notepad-logo" src="../../assets/images/notepad_white.png" matTooltip="My Notebook">
+        </ng-container>
+
+        <mat-icon *ngIf="!sideNavOpened" color="secondary"
+          (click)="sidenav.toggle(); sideNavOpened = true; toogleSideNav(sideNavOpened)" matTooltip="Exit Full Screen">
+          chevron_right
+        </mat-icon>
+        <mat-icon *ngIf="sideNavOpened" color="secondary"
+          (click)="sidenav.toggle(); sideNavOpened = false; toogleSideNav(sideNavOpened)"
+          matTooltip="View in Full Screen">
+          chevron_left
+        </mat-icon>
+      </div>
+
+      <div class="notepad-container__header__actions">
+        <!-- <mat-icon matTooltip="Open Settings" (click)="openSettings()">
+          miscellaneous_services
+        </mat-icon> -->
+
+        <!-- <button mat-icon-button [matMenuTriggerFor]="changeLanguage" matTooltip="Change Language">
+          <mat-icon>language</mat-icon>
+        </button>
+        <mat-menu #changeLanguage="matMenu">
+          <div mat-menu-item>
+            <span>Light</span>
+          </div>
+          <div mat-menu-item>
+            <span>Dark</span>
+          </div>
+          <div mat-menu-item>
+            <span>Red</span>
+          </div>
+        </mat-menu>
+
+        <button mat-icon-button [matMenuTriggerFor]="changeTheme" matTooltip="Change Theme">
+          <mat-icon>format_color_fill</mat-icon>
+        </button>
+        <mat-menu #changeTheme="matMenu">
+          <div mat-menu-item>
+            <span>Light</span>
+          </div>
+          <div mat-menu-item>
+            <span>Dark</span>
+          </div>
+          <div mat-menu-item>
+            <span>Red</span>
+          </div>
+        </mat-menu> -->
+
+        <!-- <mat-icon [matMenuTriggerFor]="menu" matTooltip="View Options">more_vert</mat-icon>
+        <mat-menu #menu="matMenu">
+          <div mat-menu-item>
+            <mat-icon matTooltip="Download">
+              cloud_download
+            </mat-icon>
+            <span>Download</span>
+          </div>
+          <div mat-menu-item>
+            <mat-icon matTooltip="Print">
+              print
+            </mat-icon>
+            <span>Print</span>
+          </div>
+          <div mat-menu-item>
+            <mat-icon matTooltip="Download as Plain Text">
+              cloud_download
+            </mat-icon>
+            <span>Download as Plain Text</span>
+          </div>
+        </mat-menu> -->
+      </div>
+    </mat-toolbar>
+    <form [formGroup]="form" class="notepad-container__content">
+      <quill-editor placeholder="" style="height:100%" (onEditorChanged)="onContentChanged($event)"
+        formControlName="url">
+      </quill-editor>
+    </form>
+  </section>
+</mat-drawer-container>

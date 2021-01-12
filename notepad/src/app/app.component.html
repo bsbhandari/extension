@@ -1,0 +1,12 @@
+<mat-drawer-container autosize class="notepad-container">
+  <mat-drawer #settingDrawer mode="side" position="end" style="width:20rem; min-width: 200px;">
+    <app-settings></app-settings>
+  </mat-drawer>
+  <section class="notepad-app-section">
+    <app-main (toogleSetting)="settingDrawer.toggle()"
+      [activeContainer]="activeContainer" [inActiveContainer]="inActiveContainer" [mappingContainer]="mappingContainer" *ngIf="!isAppLoading"></app-main>
+    <div class="notepad-loading" *ngIf="isAppLoading">
+      <mat-spinner strokeWidth="2" diameter="30"></mat-spinner>
+    </div>
+  </section>
+</mat-drawer-container>

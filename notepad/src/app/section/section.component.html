@@ -1,0 +1,140 @@
+<section class="notepad-container__content__sections-list">
+  <div class="notepad-container__content__sections-list--section">
+    <section class="section-wrapper">
+      <div class="section-header" *ngIf="getViewMode.Active===viewMode">
+        <span class="header-text">Sections </span>
+        <mat-icon matTooltip="Add Section" class="icon-add" color="primary" (click)="!isAddInProgress?addSection():''">
+          add</mat-icon>
+      </div>
+      <div class="section-header" *ngIf="getViewMode.InActive===viewMode">
+        <span class="header-text">Deleted Sections </span>
+      </div>
+      <mat-divider></mat-divider>
+
+      <mat-list cdkDropList (cdkDropListDropped)="sectionDrop($event)" class="section-content"
+        *ngIf="getViewMode.Active===viewMode">
+        <ng-scrollbar thumbClass="notepad-scrollbar-thumbs">
+          <div cdkDrag [cdkDragData]="item" [cdkDragDisabled]="item.edit"
+            class="{{item.id === (selectedSection && selectedSection.id) ?'section-row selected':'section-row'}}"
+            *ngFor="let item of sections">
+            <mat-list-item class="section-list-item">
+              <div class="section-left {{item.edit?'edit':''}}" (click)="getSection(item)">
+                <span *ngIf="!item.edit" class="section-text" matTooltip="{{item.title}}">{{item.title}}</span>
+                <input #sectionInput type="text" (keydown.enter)="save(item)" autofocus #ctrl="ngModel" *ngIf="item.edit" [(ngModel)]="item.tempValue"
+                  class="section-input" maxlength="200">
+              </div>
+
+              <div class="section-right">
+                <mat-icon color="primary" matTooltip="Edit Section" class="notepad-icons edit" *ngIf="!item.edit"
+                  (click)="edit(item, sections, 'sections')">
+                  edit
+                </mat-icon>
+                <mat-icon color="primary" matTooltip="Delete Section" class="notepad-icons delete"
+                  *ngIf="!item.edit && sections.length>1 && restrictedSection!==item.title"
+                  (click)="deleteSection(item.id)">
+                  delete
+                </mat-icon>
+                <mat-icon color="primary" matTooltip="Save Section" class="notepad-icons" *ngIf="item.edit"
+                  (click)="save(item)">
+                  check
+                </mat-icon>
+                <mat-icon color="primary" matTooltip="Cancel" class="notepad-icons" *ngIf="item.edit"
+                  (click)="cancel(item)">
+                  cancel
+                </mat-icon>
+              </div>
+            </mat-list-item>
+          </div>
+        </ng-scrollbar>
+      </mat-list>
+
+      <mat-list class="section-content" *ngIf="getViewMode.InActive===viewMode">
+        <ng-scrollbar thumbClass="notepad-scrollbar-thumbs">
+          <div class="{{item.id === (selectedSection && selectedSection.id) ?'section-row selected':'section-row'}}"
+            *ngFor="let item of sections">
+            <mat-list-item class="section-list-item">
+              <div class="section-left" (click)="getSection(item)">
+                <span class="section-text" matTooltip="{{item.title}}">{{item.title}}</span>
+              </div>
+
+              <div class="section-right">
+                <mat-icon color="primary" matTooltip="Delete Section Permanently" class="notepad-icons delete"
+                  *ngIf="restrictedSection!==item.title" (click)="deleteSection(item.id)">
+                  delete
+                </mat-icon>
+              </div>
+            </mat-list-item>
+          </div>
+        </ng-scrollbar>
+      </mat-list>
+    </section>
+  </div>
+  <div class="notepad-container__content__sections-list--sub-section">
+    <section class="section-wrapper">
+      <div class="section-header" *ngIf="getViewMode.Active===viewMode">
+        <span class="header-text">Notes </span>
+        <mat-icon matTooltip="Add Note" class="icon-add" color="primary"
+          (click)="!isAddInProgress?addNote(selectedSection):''">add
+        </mat-icon>
+      </div>
+      <div class="section-header" *ngIf="getViewMode.InActive===viewMode">
+        <span class="header-text">Deleted Notes </span>
+      </div>
+      <mat-divider></mat-divider>
+      <mat-list cdkDropList (cdkDropListDropped)="sectionDrop($event)" class="section-content"
+        *ngIf="getViewMode.Active===viewMode">
+        <ng-scrollbar thumbClass="notepad-scrollbar-thumbs">
+          <div cdkDrag [cdkDragData]="item" [cdkDragDisabled]="item.edit"
+            class="{{item.id === (selectedNote && selectedNote.id) ?'section-row selected':'section-row'}}"
+            *ngFor="let item of notes">
+            <mat-list-item class="section-list-item">
+              <div class="section-left {{item.edit?'edit':''}}" (click)="getNote(item)">
+                <span *ngIf="!item.edit" class="section-text" matTooltip="{{item.title}}">{{item.title}}</span>
+                <input #noteInput autofocus type="text" #ctrl="ngModel" *ngIf="item.edit" [(ngModel)]="item.tempValue"
+                  class="section-input" (keydown.enter)="save(item)" maxlength="200">
+              </div>
+
+              <div class="section-right">
+                <mat-icon color="primary" matTooltip="Edit Note" class="notepad-icons edit" *ngIf="!item.edit"
+                  (click)="edit(item, notes, 'notes')">
+                  edit
+                </mat-icon>
+                <mat-icon color="primary" matTooltip="Delete Note" class="notepad-icons delete"
+                  *ngIf="!item.edit && notes.length>1 " (click)="deleteNote(item.id)">
+                  delete
+                </mat-icon>
+                <mat-icon color="primary" matTooltip="Save Note" class="notepad-icons" *ngIf="item.edit"
+                  (click)="save(item, 'note')">
+                  check
+                </mat-icon>
+                <mat-icon color="primary" matTooltip="Cancel" class="notepad-icons" *ngIf="item.edit"
+                  (click)="cancel(item)">
+                  cancel
+                </mat-icon>
+              </div>
+            </mat-list-item>
+          </div>
+        </ng-scrollbar>
+      </mat-list>
+
+      <mat-list class="section-content" *ngIf="getViewMode.InActive===viewMode">
+        <ng-scrollbar thumbClass="notepad-scrollbar-thumbs">
+          <div class="{{item.id === (selectedNote && selectedNote.id) ?'section-row selected':'section-row'}}"
+            *ngFor="let item of notes">
+            <mat-list-item class="section-list-item">
+              <div class="section-left" (click)="getNote(item)">
+                <span class="section-text" matTooltip="{{item.title}}">{{item.title}}</span>
+              </div>
+              <div class="section-right">
+                <mat-icon color="primary" matTooltip="Delete Note Permanently" class="notepad-icons delete"
+                  (click)="deleteNote(item.id)">
+                  delete
+                </mat-icon>
+              </div>
+            </mat-list-item>
+          </div>
+        </ng-scrollbar>
+      </mat-list>
+    </section>
+  </div>
+</section>
