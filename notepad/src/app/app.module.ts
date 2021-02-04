@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -17,9 +16,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-
 import { NgScrollbarModule } from 'ngx-scrollbar';
-
 import { QuillModule } from 'ngx-quill';
 import { MatListModule } from '@angular/material/list';
 import { TrashComponent } from './trash/trash.component';
@@ -56,10 +53,7 @@ import { APP_CONSTANTS } from './app.constants';
     MatDialogModule,
     MatProgressSpinnerModule,
     DragDropModule,
-
-
     NgScrollbarModule,
-
     QuillModule.forRoot({
       modules: APP_CONSTANTS.EDITOR_OPTIONS
     }),
