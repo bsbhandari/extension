@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  APP_FOLDER: 'Quick-Notes(DO_NOT_TOUCH)',
 };

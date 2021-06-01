@@ -1,5 +1,75 @@
-<mat-tab-group>
-  <mat-tab label="User Preferences">
-    test
-  </mat-tab>
-</mat-tab-group>
+<ng-scrollbar thumbClass="notepad-scrollbar-thumbs">
+  <section style="padding:10px">
+    <p-divider align="left">
+      <span class="p-tag">Select Font Family</span>
+    </p-divider>
+
+    <p-dropdown [(ngModel)]="settings.font" [options]="configs?.fontFamily" optionLabel="name">
+      <ng-template pTemplate="selectedItem">
+        <div class="country-item country-item-value" *ngIf="settings.font">
+          <div>{{settings.font.name}}</div>
+        </div>
+      </ng-template>
+      <ng-template let-country pTemplate="item">
+        <div class="country-item">
+          <div>{{country.name}}</div>
+        </div>
+      </ng-template>
+    </p-dropdown>
+
+    <p-divider align="left">
+      <span class="p-tag">Select Font Size</span>
+    </p-divider>
+    <p-dropdown [(ngModel)]="settings.font" [options]="configs?.fontFamily" optionLabel="name">
+      <ng-template pTemplate="selectedItem">
+        <div class="country-item country-item-value" *ngIf="settings.font">
+          <div>{{settings.font.name}}</div>
+        </div>
+      </ng-template>
+      <ng-template let-country pTemplate="item">
+        <div class="country-item">
+          <div>{{country.name}}</div>
+        </div>
+      </ng-template>
+    </p-dropdown>
+
+    <p-divider align="left">
+      <span class="p-tag">Select Theme</span>
+    </p-divider>
+    <p-dropdown [(ngModel)]="settings.font" [options]="configs?.fontFamily" optionLabel="name">
+      <ng-template pTemplate="selectedItem">
+        <div class="country-item country-item-value" *ngIf="settings.font">
+          <div>{{settings.font.name}}</div>
+        </div>
+      </ng-template>
+      <ng-template let-country pTemplate="item">
+        <div class="country-item">
+          <div>{{country.name}}</div>
+        </div>
+      </ng-template>
+    </p-dropdown>
+
+    <p-divider align="left">
+      <span class="p-tag">Select Height</span>
+    </p-divider>
+    <p-dropdown [(ngModel)]="settings.font" [options]="configs?.fontFamily" optionLabel="name">
+      <ng-template pTemplate="selectedItem">
+        <div class="country-item country-item-value" *ngIf="settings.font">
+          <div>{{settings.font.name}}</div>
+        </div>
+      </ng-template>
+      <ng-template let-country pTemplate="item">
+        <div class="country-item">
+          <div>{{country.name}}</div>
+        </div>
+      </ng-template>
+    </p-dropdown>
+
+    <p-divider align="left">
+      <span class="p-tag">Select Width</span>
+    </p-divider>
+    <div>
+      Sorry width is not in our control.
+    </div>
+  </section>
+</ng-scrollbar>

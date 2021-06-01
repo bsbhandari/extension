@@ -1,0 +1,23 @@
+<mat-toolbar color="secondary" class="notepad-container__footer">
+  <div class="notepad-container__footer--left">
+    <mat-icon matTooltip="View Deleted Notes" color="primary" class="notepad-icons" *ngIf="mode===getViewMode.Active"
+      (click)="toggleTrash()">
+      delete_outline
+    </mat-icon>
+    <mat-icon matTooltip="Go Back To Notes" color="primary" class="notepad-icons" *ngIf="mode===getViewMode.InActive"
+      (click)="toggleTrash()">
+      arrow_back_ios
+    </mat-icon>
+  </div>
+
+  <div class="notepad-container__footer--right">
+    <a href="https://www.facebook.com/chromenotes" target="_blank" matTooltip="Follow in facebook" (click)="openFb()">
+      <img class="notepad-icons" src="../../assets/images/facebook.png">
+    </a>
+    &nbsp;
+    <a href="https://www.linkedin.com/in/bhupendrab/" target="_blank" matTooltip="Follow in linkedin"
+      (click)="openLinkedIn()">
+      <img class="notepad-icons" src="../../assets/images/linkedin.png">
+    </a>
+  </div>
+</mat-toolbar>

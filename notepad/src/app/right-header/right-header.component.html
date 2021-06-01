@@ -1,0 +1,20 @@
+<mat-toolbar color="primary" class="notepad-container__header">
+  <div class="notepad-container__header__left">
+    <ng-container *ngIf="!sideNavOpened">
+      <img class="notepad-logo" src="../../assets/images/notepad_white.png" matTooltip="My Notebook">
+    </ng-container>
+    <mat-icon *ngIf="!sideNavOpened" color="secondary"
+      (click)="context.toggle(); sideNavOpened = true; toogleSideNav(sideNavOpened)" matTooltip="Exit Full Screen">
+      chevron_right
+    </mat-icon>
+    <mat-icon *ngIf="sideNavOpened" color="secondary"
+      (click)="context.toggle(); sideNavOpened = false; toogleSideNav(sideNavOpened)" matTooltip="View in Full Screen">
+      chevron_left
+    </mat-icon>
+  </div>
+  <div class="notepad-container__header__actions">
+    <mat-icon matTooltip="Open Settings" (click)="openSettings()">
+      miscellaneous_services
+    </mat-icon>
+  </div>
+</mat-toolbar>

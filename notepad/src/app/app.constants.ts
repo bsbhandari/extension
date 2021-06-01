@@ -1,8 +1,9 @@
 export const APP_CONSTANTS = {
   OTHER_BOOKMARKS_ID: '2',
-  APP_FOLDER: 'Quick-Notes(DO_NOT_TOUCH)',
   ACTIVE_FOLDER: 'Quick-Notes(Active)',
   INACTIVE_FOLDER: 'Quick-Notes(InActive)',
+  SETTING_FOLDER: 'Quick-Notes(Setting)',
+
   SECTION_DEFAULT_NAME: 'Section',
   NOTE_DEFAULT_NAME: 'Note',
   INACTIVE_NOTES: 'Uncategorised',

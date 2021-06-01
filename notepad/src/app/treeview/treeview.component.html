@@ -1,0 +1,46 @@
+<ng-scrollbar thumbClass="notepad-scrollbar-thumbs">
+  <ng-container *ngIf="mode===getViewMode.Active">
+    <p-tree [value]="data" [filter]="true" [validateDrop]="true" (onNodeDrop)="validateDrop($event)"
+      selectionMode="single" [(selection)]="bookMark" draggableNodes="true" droppableNodes="true"
+      (onNodeSelect)="onNodeSelect($event)">
+      <ng-template pTemplate="header">
+        Header Content
+      </ng-template>
+      <ng-template pTemplate="empty">
+        Oop's ☹️ Please refine your search
+      </ng-template>
+      <ng-template let-node pTemplate="default">
+        <div fxLayout="row" fxLayoutAlign="space-between center" class="template-wrapper">
+          <div class="section-left {{node.edit?'edit':''}}">
+            <span *ngIf="!node.edit" class="section-text" matTooltip="{{node.label}}">{{node.label}}</span>
+            <input #noteInput autofocus type="text" #ctrl="ngModel" *ngIf="node.edit" [(ngModel)]="node.tempValue"
+              class="section-input" (keydown.enter)="save(node)" maxlength="200">
+          </div>
+          <div class="section-right">
+            <mat-icon color="primary" matTooltip="Edit Note" class="notepad-icons edit" *ngIf="!node.edit"
+              (click)="edit(node)">
+              edit
+            </mat-icon>
+            <mat-icon color="primary" matTooltip="Delete Note" class="notepad-icons delete" *ngIf="!node.edit"
+              (click)="delete(item.id)">
+              delete
+            </mat-icon>
+            <mat-icon color="primary" matTooltip="Save Note" class="notepad-icons" *ngIf="node.edit"
+              (click)="save(node)">
+              check
+            </mat-icon>
+            <mat-icon color="primary" matTooltip="Cancel" class="notepad-icons" *ngIf="node.edit"
+              (click)="cancel(node)">
+              cancel
+            </mat-icon>
+          </div>
+        </div>
+      </ng-template>
+    </p-tree>
+  </ng-container>
+  <ng-container *ngIf="mode===getViewMode.InActive">
+    <p-tree [value]="data" [filter]="true" (onNodeSelect)="onNodeSelect($event)" selectionMode="single"
+      [(selection)]="bookMark">
+    </p-tree>
+  </ng-container>
+</ng-scrollbar>

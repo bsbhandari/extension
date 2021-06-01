@@ -5,7 +5,7 @@ import { ChromeApiService } from '../services/chrome-api.service';
 import { APP_CONSTANTS } from '../app.constants';
 import { find } from 'lodash';
 import { AnalyticsEventMap } from '../interfaces/google-analytics';
-import { GoogleAnalyticsService } from '../google-analytics.service';
+import { GoogleAnalyticsService } from '../services/google-analytics.service';
 
 @Component({
   selector: 'app-section',

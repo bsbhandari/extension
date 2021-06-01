@@ -1,96 +1,96 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ChromeApiService } from './services/chrome-api.service';
 import { APP_CONSTANTS } from './app.constants';
 import { find } from 'lodash';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { Bookmark } from './interfaces/bookmark';
-import { GoogleAnalyticsService } from './google-analytics.service';
+import { GoogleAnalyticsService } from './services/google-analytics.service';
 import { AnalyticsEventMap } from './interfaces/google-analytics';
+import { environment } from '../environments/environment';
+import { SettingsComponent } from './settings/settings.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
-  activeContainer: Bookmark;
-  inActiveContainer: Bookmark;
-  mappingContainer: Bookmark;
-  isAppLoading = true;
-  constructor(private chromeApiService: ChromeApiService, private googleAnalyticsService: GoogleAnalyticsService) {
-  }
+  isAppLoading: boolean = false;
+  activeBookmark: Bookmark;
+  inActiveBookmark: Bookmark;
+  settingBookmark: Bookmark;
+  showSetting: boolean = false;
+
+
+  @ViewChild(SettingsComponent, { static: true }) settings: SettingsComponent;
+  constructor(private cas: ChromeApiService, private gas: GoogleAnalyticsService) { }
 
   ngOnInit(): void {
-    this.isAppLoading = false;
-    this.getApplicationConfiguration();
-    this.googleAnalyticsService.emitEvent(AnalyticsEventMap.NOTEBOOK_OPENED);
+    setTimeout(() => {
+      this.getApplicationConfiguration();
+    }, 2000)
+
+    this.gas.emitEvent(AnalyticsEventMap.NOTEBOOK_OPENED);
   }
 
   getApplicationConfiguration() {
-    this.chromeApiService.getSubTree(APP_CONSTANTS.OTHER_BOOKMARKS_ID).subscribe((bookmarks: any[]) => {
-      if (bookmarks && bookmarks.length) {
-        const [value] = bookmarks;
-        const { children } = value;
-        if (children) {
-          const applicationContainer = find(children, (bookmark) => { return bookmark.title === APP_CONSTANTS.APP_FOLDER });
-          if (applicationContainer) {
-            const { children: appChildren } = applicationContainer;
-            const inActiveContainer = find(appChildren, (bookmark) => { return bookmark.title === APP_CONSTANTS.INACTIVE_FOLDER });
-            const activeContainer = find(appChildren, (bookmark) => { return bookmark.title === APP_CONSTANTS.ACTIVE_FOLDER });
-            if (inActiveContainer && activeContainer) {
-              this.activeContainer = activeContainer;
-              this.inActiveContainer = inActiveContainer;
-              this.isAppLoading = false;
-            } else if (activeContainer && !inActiveContainer) {
-              this.activeContainer = activeContainer;
-              const inActiveContainerPayload = { parentId: applicationContainer.id, title: APP_CONSTANTS.INACTIVE_FOLDER };
-              this.createSubContainers(undefined, inActiveContainerPayload);
-            } else if (inActiveContainer && !activeContainer) {
-              this.inActiveContainer = inActiveContainer;
-              const activeContainerPayload = { parentId: applicationContainer.id, title: APP_CONSTANTS.ACTIVE_FOLDER };
-              this.createSubContainers(activeContainerPayload, undefined);
-            } else {
-              const activeContainerPayload = { parentId: applicationContainer.id, title: APP_CONSTANTS.ACTIVE_FOLDER };
-              const inActiveContainerPayload = { parentId: applicationContainer.id, title: APP_CONSTANTS.INACTIVE_FOLDER };
-              this.createSubContainers(activeContainerPayload, inActiveContainerPayload);
-            }
-          } else {
-            this.createApplicationConfiguration();
-          }
+    this.cas.getSubTree(APP_CONSTANTS.OTHER_BOOKMARKS_ID).subscribe((bookmarks: any[]) => {
+      if (bookmarks && bookmarks.length && bookmarks[0] && bookmarks[0].children) {
+        const children = bookmarks[0].children;
+        const root: Bookmark = find(children, (bookmark: Bookmark) => bookmark.title === environment.APP_FOLDER);
+        if (root) {
+          const { children: kids } = root;
+          const activeBookmark: Bookmark = find(kids, (bookmark: Bookmark) => bookmark.title === APP_CONSTANTS.ACTIVE_FOLDER);
+          const inActiveBookmark: Bookmark = find(kids, (bookmark: Bookmark) => bookmark.title === APP_CONSTANTS.INACTIVE_FOLDER);
+          const settingBookmark: Bookmark = find(kids, (bookmark: Bookmark) => bookmark.title === APP_CONSTANTS.SETTING_FOLDER);
+          let subscription = {} as any;
+          subscription.activeBookmark = (activeBookmark ? of(activeBookmark) : this.createBookmarkSubscription(root.id, APP_CONSTANTS.ACTIVE_FOLDER));
+          subscription.inActiveBookmark = (inActiveBookmark ? of(inActiveBookmark) : this.createBookmarkSubscription(root.id, APP_CONSTANTS.INACTIVE_FOLDER));
+          subscription.settingBookmark = (settingBookmark ? of(settingBookmark) : this.createBookmarkSubscription(root.id, APP_CONSTANTS.SETTING_FOLDER));
+          this.createApplicationContainers(subscription);
         } else {
           this.createApplicationConfiguration();
         }
+      } else {
+        this.createApplicationConfiguration();
       }
     });
   }
 
   createApplicationConfiguration() {
-    const payload = { parentId: APP_CONSTANTS.OTHER_BOOKMARKS_ID, title: APP_CONSTANTS.APP_FOLDER };
-    this.chromeApiService.create(payload).subscribe((response: Bookmark) => {
-      const activeContainerPayload = { parentId: response.id, title: APP_CONSTANTS.ACTIVE_FOLDER };
-      const inActiveContainerPayload = { parentId: response.id, title: APP_CONSTANTS.INACTIVE_FOLDER };
-      this.createSubContainers(activeContainerPayload, inActiveContainerPayload);
-    })
+    const payload = { parentId: APP_CONSTANTS.OTHER_BOOKMARKS_ID, title: environment.APP_FOLDER };
+    this.cas.create(payload).subscribe((root: Bookmark) => {
+      let subscription = {} as any;
+      subscription.activeBookmark = (this.createBookmarkSubscription(root.id, APP_CONSTANTS.ACTIVE_FOLDER));
+      subscription.inActiveBookmark = (this.createBookmarkSubscription(root.id, APP_CONSTANTS.INACTIVE_FOLDER));
+      subscription.settingBookmark = (this.createBookmarkSubscription(root.id, APP_CONSTANTS.SETTING_FOLDER));
+      this.createApplicationContainers(subscription);
+    });
   }
 
-  createSubContainers(activePayload, inActivePayload) {
-    forkJoin(
-      activePayload ? this.chromeApiService.create(activePayload) : of(this.activeContainer),
-      inActivePayload ? this.chromeApiService.create(inActivePayload) : of(this.inActiveContainer)
-    ).subscribe(([activeContainer, inActiveContainer]) => {
-      if (activePayload) {
-        this.chromeApiService.create({ parentId: activeContainer['id'], title: APP_CONSTANTS.DEFAULT_SECTION }).subscribe((response: Bookmark) => {
-          const payload = APP_CONSTANTS.DEFAULT_NOTE(response.id);
-          this.chromeApiService.create(payload).subscribe((response: Bookmark) => {
-          });
-        });
-      }
+  createBookmarkSubscription(parentId: string, title: string) {
+    const payload = { parentId, title };
+    return this.cas.create(payload);
+  }
 
-      if (inActivePayload) {
-        this.chromeApiService.create({ parentId: inActiveContainer['id'], title: APP_CONSTANTS.INACTIVE_NOTES }).subscribe((response: Bookmark) => {
-
-        });
-      }
-      this.getApplicationConfiguration();
+  createApplicationContainers(subscriptions: any[]) {
+    forkJoin(subscriptions).subscribe((value: any) => {
+      this.activeBookmark = value.activeBookmark as Bookmark;
+      this.inActiveBookmark = value.inActiveBookmark as Bookmark;
+      this.settingBookmark = value.settingBookmark as Bookmark;
+      this.isAppLoading = false;
     });
+  }
+
+  openSettings(event) {
+    this.showSetting = true;
+  }
+
+  onSave() {
+    this.gas.emitEvent(AnalyticsEventMap.RENAME_SECTION);
+    const url = this.settings.toJSON();
+    this.cas.update(this.settingBookmark.id, { url }).subscribe((bookmark: Bookmark) => {
+      this.settingBookmark = bookmark;
+    });
+    this.showSetting = false;
   }
 }

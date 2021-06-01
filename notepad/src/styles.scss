@@ -1,10 +1,10 @@
-@import "~@angular/material/theming";
+@use '~@angular/material' as mat;
 @import './styles/styles-theme.scss';
-@include mat-core();
-$notepad-primary: mat-palette($mat-indigo);
-$notepad-accent: mat-palette($mat-pink, A200, A100, A400);
-$notepad-warn: mat-palette($mat-red);
-$notepad-theme: mat-light-theme(
+@include mat.core();
+$notepad-primary: mat.define-palette(mat.$indigo-palette);
+$notepad-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$notepad-warn: mat.define-palette(mat.$red-palette);
+$notepad-theme: mat.define-light-theme(
   $notepad-primary,
   $notepad-accent,
   $notepad-warn
@@ -13,12 +13,12 @@ $notepad-theme: mat-light-theme(
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include angular-material-theme($notepad-theme);
+@include mat.all-component-themes($notepad-theme);
 @include material-custom-theme($notepad-theme);
 @import './styles/module-overrides';
 html,
 body {
-  height: 400px;
+  min-height: 600px;
   width: 800px;
 }
 body {
